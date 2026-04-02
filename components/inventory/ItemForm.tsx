@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Switch } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useTheme } from '@/hooks/useTheme';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -108,8 +108,35 @@ function SelectRow<T extends string>({
 }
 
 export function ItemForm({ data, onChange, onSubmit, loading, submitLabel = 'Save Item' }: Props) {
+  const { colors } = useTheme();
+
   function set(field: keyof ItemFormData, val: string) {
     onChange({ ...data, [field]: val });
+  }
+
+  function NotesInput({ data, set }: { data: ItemFormData; set: (k: keyof ItemFormData, v: string) => void }) {
+    return (
+      <TextInput
+        multiline
+        numberOfLines={4}
+        placeholder="Additional notes..."
+        placeholderTextColor={colors.textTertiary}
+        value={data.notes}
+        onChangeText={(v) => set('notes', v)}
+        style={{
+          backgroundColor: colors.inputBg,
+          borderRadius: 10,
+          padding: 14,
+          fontSize: 15,
+          color: colors.text,
+          minHeight: 100,
+          textAlignVertical: 'top',
+          marginBottom: 20,
+          borderWidth: 1,
+          borderColor: colors.border,
+        }}
+      />
+    );
   }
 
   return (
@@ -197,22 +224,7 @@ export function ItemForm({ data, onChange, onSubmit, loading, submitLabel = 'Sav
       />
 
       <Section title="Notes" />
-      <TextInput
-        multiline
-        numberOfLines={4}
-        placeholder="Additional notes..."
-        value={data.notes}
-        onChangeText={(v) => set('notes', v)}
-        style={{
-          backgroundColor: '#F3F4F6',
-          borderRadius: 10,
-          padding: 14,
-          fontSize: 15,
-          minHeight: 100,
-          textAlignVertical: 'top',
-          marginBottom: 20,
-        }}
-      />
+      <NotesInput data={data} set={set} />
 
       <Button onPress={onSubmit} label={submitLabel} loading={loading} />
     </ScrollView>
